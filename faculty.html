@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Faculty Directory</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    scrollbar-color: BLACK;
+    background-color: #f4f4f4;
+    display: flex;
+    overflow-y: auto; /* Allow scrolling if needed */
+}
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto; /* Allow scrolling in sidebar */
+}
+.department {
+    padding: 10px;
+    background-color: #8a8787;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    color: black;
+}
+.department:hover {
+    background-color: #8ab8db;
+}
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+.search-bar {
+    text-align: center;
+    margin-right: 30%;
+    margin: 1rem 0;        
+}
+.search-bar input {
+    padding: 0.5rem;
+    width: 20%;
+    max-width: 600px;
+    font-size: 1rem;
+    border: 3px solid #090909;
+    border-radius: 5px;
+    box-shadow: 0 4px 15px rgba(142, 137, 137, 0.3);
+}   
+.faculty-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 10px;
+    justify-content: flex-start;
+}
+.faculty-card {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgb(89, 86, 86);
+    width: 350px;
+    height: 350px;
+    text-align: center;
+    cursor: pointer;
+}
+.faculty-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 70%;
+    padding: 40px;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    min-width: 300px;
+    max-width: 500px;
+}
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+.close-button:hover {
+    color: #000;
+}
+.notification-icon {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+.notification-icon:hover {
+    background-color: #cc0000;
+}
+.leave-modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+.leave-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    position: relative;
+    min-width: 300px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.leave-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+}
+.leave-close-button:hover {
+    color: #000;
+}
+    </style>
+</head>
+<body>
+    <div class="sidebar" style="width: 200px;">
+        <h2>Departments</h2>
+        <div class="department" onclick="filterFaculty('all')">All Departments</div>
+        <div class="department" onclick="filterFaculty('CSE')">CSE</div>
+        <div class="department" onclick="filterFaculty('IT')">IT</div>
+        <div class="department" onclick="filterFaculty('ECE')">ECE</div>
+        <div class="department" onclick="filterFaculty('EEE')">EEE</div>
+        <div class="department" onclick="filterFaculty('CIVIL')">CIVIL</div>
+        <div class="department" onclick="filterFaculty('MECHANICAL')">MECHANICAL</div>
+        <div class="department" onclick="filterFaculty('CHEMICAL')">CHEMICAL</div>
+        <div class="department" onclick="filterFaculty('ENGLISH')">ENGLISH</div>
+    </div>
+    <div class="content">
+        <div id="notificationIcon" class="notification-icon" onclick="showLeaveNotifications()">!</div>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" onkeyup="searchFaculty()" placeholder="                        Search Faculty">
+        </div>
+        <div class="faculty-container" id="facultyContainer"></div>
+    </div>
+    <div id="modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-button" onclick="closeModal()">×</span>
+            <p id="modal-text">Timetable will appear here</p>
+        </div>
+    </div>
+    <div id="leaveModal" class="leave-modal" onclick="closeLeaveModal(event)">
+        <div class="leave-modal-content" onclick="event.stopPropagation()">
+            <span class="leave-close-button" onclick="closeLeaveModal()">×</span>
+            <div id="leaveModalText">Leave notifications will appear here</div>
+        </div>
+    </div>
+
+    <script>
+        function populateFacultyCards() {
+            const facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+            const facultyContainer = document.getElementById('facultyContainer');
+            facultyContainer.innerHTML = '';
+
+            for (const facultyID in facultyData) {
+                const { name, branch, position, image } = facultyData[facultyID];
+                const card = document.createElement('div');
+                card.className = 'faculty-card';
+                card.setAttribute('data-department', branch);
+                card.setAttribute('onclick', `showTimetable('${facultyID}')`);
+                const profileImage = image || "https://img.freepik.com/premium-vector/school-teacher-education-children-class-knowledge-student-vector-illustration-teaching-pos_1013341-449868.jpg";
+                card.innerHTML = `
+                    <img src="${profileImage}" alt="${name}">
+                    <h3>${name}</h3>
+                    <p>${position}</p>
+                    <p style="font-weight: bold;">Not Updated</p>
+                `;
+                facultyContainer.appendChild(card);
+            }
+            updateFacultyAvailability();
+            checkLeaveNotifications();
+        }
+
+        function showTimetable(facultyID) {
+            const facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+            const facultySchedules = JSON.parse(localStorage.getItem('facultySchedules')) || {};
+            const name = facultyData[facultyID]?.name || "Unknown Faculty";
+            const schedule = facultySchedules[facultyID] || {};
+
+            let scheduleText = `<h2>${name}'s Schedule</h2><ul style="list-style:none; text-align: left;">`;
+            if (Object.keys(schedule).length === 0) {
+                scheduleText += "<li>No timetable available yet.</li>";
+            } else {
+                const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const timeSlots = {
+                    '9am': '9:00 AM - 10:00 AM', '10am': '10:00 AM - 11:00 AM', '11am': '11:00 AM - 12:00 PM',
+                    '1pm': '1:00 PM - 2:00 PM', '2pm': '2:00 PM - 3:00 PM', '3pm': '3:00 PM - 4:00 PM'
+                };
+                days.forEach(day => {
+                    let hasEntries = false;
+                    let dayText = `<li><strong>${day.charAt(0).toUpperCase() + day.slice(1)}</strong></li>`;
+                    for (const time in timeSlots) {
+                        const key = `${day}-${time}`;
+                        if (schedule[key]) {
+                            dayText += `<li>${timeSlots[time]}: ${schedule[key]}</li>`;
+                            hasEntries = true;
+                        }
+                    }
+                    if (hasEntries) scheduleText += dayText;
+                });
+            }
+            scheduleText += "</ul>";
+            document.getElementById("modal-text").innerHTML = scheduleText;
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function closeModal(event) {
+            const modal = document.getElementById("modal");
+            if (event.target === modal || event.target.className === "close-button") {
+                modal.style.display = "none";
+            }
+        }
+
+        function filterFaculty(department) {
+            const facultyCards = document.querySelectorAll(".faculty-card");
+            facultyCards.forEach(card => {
+                card.style.display = (department === "all" || card.getAttribute("data-department") === department) ? "block" : "none";
+            });
+        }
+
+        function searchFaculty() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let facultyCards = document.querySelectorAll(".faculty-card");
+            facultyCards.forEach(card => {
+                let name = card.querySelector("h3").textContent.toLowerCase();
+                card.style.display = name.includes(input) ? "block" : "none";
+            });
+        }
+
+        function updateFacultyAvailability() {
+            const today = new Date().toISOString().split("T")[0];
+            const facultyData = JSON.parse(localStorage.getItem("facultyData")) || {};
+            document.querySelectorAll(".faculty-card").forEach(card => {
+                const facultyName = card.querySelector("h3").textContent.trim();
+                const facultyID = Object.keys(facultyData).find(id => facultyData[id].name === facultyName);
+                const statusKey = `status_${facultyID}_${today}`;
+                const storedData = localStorage.getItem(statusKey);
+                const availabilityText = card.querySelector("p:nth-child(4)");
+
+                if (storedData) {
+                    const { status, timestamp } = JSON.parse(storedData);
+                    const currentTime = new Date().getTime();
+                    if (currentTime - timestamp <= 8 * 60 * 60 * 1000) {
+                        if (status === "Present") {
+                            card.style.backgroundColor = "#90EE90";
+                            availabilityText.textContent = "Available";
+                            availabilityText.style.color = "green";
+                        } else if (status === "Leave") {
+                            card.style.backgroundColor = "#FF7F7F";
+                            availabilityText.textContent = "Not Available";
+                            availabilityText.style.color = "red";
+                        }
+                    } else {
+                        localStorage.removeItem(statusKey);
+                        card.style.backgroundColor = "white";
+                        availabilityText.textContent = "Not Updated";
+                        availabilityText.style.color = "black";
+                    }
+                } else {
+                    card.style.backgroundColor = "white";
+                    availabilityText.textContent = "Not Updated";
+                    availabilityText.style.color = "black";
+                }
+            });
+        }
+
+        async function sendReminderEmail(facultyName, email, facultyID, type) {
+            const today = new Date().toISOString().split("T")[0];
+            const reminderKey = `reminder_${facultyID}_${today}_${type}`;
+            if (localStorage.getItem(reminderKey)) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/send-reminder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        facultyName,
+                        email,
+                        date: today,
+                        sender: "potnurumehersrija@gmail.com",
+                        type
+                    })
+                });
+                if (response.ok) {
+                    localStorage.setItem(reminderKey, JSON.stringify({ timestamp: Date.now() }));
+                    console.log(`${type} reminder sent to ${email}`);
+                } else {
+                    throw new Error(`Failed to send ${type} reminder`);
+                }
+            } catch (error) {
+                console.error(`${type} reminder error:`, error);
+                alert(`Simulated ${type} reminder to ${email}: "Please update your status, ${facultyName}."`);
+            }
+        }
+
+        function checkDailyReminders() {
+            const now = new Date();
+            if (now.getHours() !== 10 || now.getMinutes() > 5) return;
+
+            const today = now.toISOString().split("T")[0];
+            const facultyData = JSON.parse(localStorage.getItem("facultyData")) || {};
+
+            Object.keys(facultyData).forEach(facultyID => {
+                const { name, email } = facultyData[facultyID];
+                const statusKey = `status_${facultyID}_${today}`;
+                if (!localStorage.getItem(statusKey)) {
+                    sendReminderEmail(name, email, facultyID, "daily");
+                }
+            });
+        }
+
+        function checkLeaveNotifications() {
+            const leaveNotifications = JSON.parse(localStorage.getItem('leaveNotifications')) || [];
+            const notificationIcon = document.getElementById('notificationIcon');
+            const today = new Date().getTime();
+
+            const recentNotifications = leaveNotifications.filter(
+                n => (today - n.timestamp) <= 24 * 60 * 60 * 1000
+            );
+
+            if (recentNotifications.length > 0) {
+                notificationIcon.style.display = 'flex';
+            } else {
+                notificationIcon.style.display = 'none';
+            }
+        }
+
+        function showLeaveNotifications() {
+            const leaveNotifications = JSON.parse(localStorage.getItem('leaveNotifications')) || [];
+            const leaveModalText = document.getElementById('leaveModalText');
+            const today = new Date().getTime();
+
+            const recentNotifications = leaveNotifications.filter(
+                n => (today - n.timestamp) <= 24 * 60 * 60 * 1000
+            );
+
+            if (recentNotifications.length === 0) {
+                leaveModalText.innerHTML = "<p>No recent leave notifications.</p>";
+            } else {
+                let notificationText = "<h3>Recent Leave Notifications</h3><ul style='list-style: none; padding: 0;'>";
+                recentNotifications.forEach(n => {
+                    notificationText += `
+                        <li style="margin-bottom: 15px;">
+                            <strong>Faculty Name:</strong> ${n.facultyName}<br>
+                            <strong>Leave Date:</strong> ${n.date}<br>
+                            <strong>Reason:</strong> ${n.reason}
+                        </li>
+                    `;
+                });
+                notificationText += "</ul>";
+                leaveModalText.innerHTML = notificationText;
+            }
+            document.getElementById('leaveModal').style.display = 'flex';
+        }
+
+        function closeLeaveModal(event) {
+            const modal = document.getElementById('leaveModal');
+            if (event.target === modal || event.target.className === 'leave-close-button') {
+                modal.style.display = 'none';
+            }
+        }
+
+        window.onload = function() {
+            populateFacultyCards();
+            setInterval(() => {
+                updateFacultyAvailability();
+                checkLeaveNotifications();
+                checkDailyReminders();
+            }, 60000); // 1 minute for testing, 300000 (5 minutes) for production
+        };
+    </script>
+</body>
+</html>

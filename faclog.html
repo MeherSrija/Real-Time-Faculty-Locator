@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+       body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb, #d4a5f9);
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    /* padding: 30px; */
+    border-radius: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    height: auto;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+.container:hover {
+    transform: translateY(-5px);
+}
+
+h2 {
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #1a3c6b;
+    letter-spacing: 1px;
+}
+
+img {
+    width: 150px;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+    display: none;
+}
+
+.form-container.active {
+    display: block;
+}
+
+input {
+    width: 75%;
+    height: 10%;
+    padding: 10px 5px;
+    margin: 5px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f8f9fa;
+    color: #333;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+}
+
+input:focus {
+    border-color: #1d977b;
+    box-shadow: 0 0 8px rgba(29, 151, 123, 0.3);
+}
+
+input::placeholder {
+    color: #999;
+    font-weight: 300;
+}
+
+button {
+    background: linear-gradient(45deg, #1d977b, #25b391);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 30%;
+    font-size: 1.1rem;
+    font-weight: 400;
+    margin-top: 15px;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #021c37, #042c54);
+    transform: scale(1.02);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.switch-form {
+    margin-top: 20px;
+    cursor: pointer;
+    color: #1a3c6b;
+    font-size: 0.9rem;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.switch-form a {
+    color: #1a3c6b;
+    text-decoration: none;
+}
+
+.switch-form a:hover {
+    color: #1d977b;
+    text-decoration: underline;
+}
+
+#signupStep1, #signupStep2 {
+    transition: opacity 0.3s ease;
+}
+
+#signupStep2 {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container active" id="signinFormContainer">
+            <h2>Faculty Login</h2>
+            <img src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8zMF8zZF9yZW5kZXJfY2hhcmFjdGVyX29mX3RlYWNoZXJfY3V0ZV9jYXJ0b29uX180NmY0MGE4ZC03OWRmLTQ1ODEtOGQ3ZC0xNDZkMTdhZGIxMTVfMi5qcGc.jpg" alt="Faculty Portal">
+            <div class="input-field"><input type="text" id="signinFacultyID" placeholder="Faculty ID" required></div>
+            <div class="input-field"><input type="password" id="signinPassword" placeholder="Password" required></div>
+            <button id="signinButton">Sign In</button>
+            <div class="switch-form"><p>Don't have an account? <a id="switchToSignup">Sign Up</a></p></div>
+        </div>
+
+        <div class="form-container" id="signupFormContainer">
+            <h2>Faculty Sign Up</h2>
+            <img src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8zMF8zZF9yZW5kZXJfY2hhcmFjdGVyX29mX3RlYWNoZXJfY3V0ZV9jYXJ0b29uX180NmY0MGE4ZC03OWRmLTQ1ODEtOGQ3ZC0xNDZkMTdhZGIxMTVfMi5qcGc.jpg" alt="Faculty Portal">
+            <div id="signupStep1">
+                <div class="input-field"><input type="text" id="faculty_id" placeholder="Faculty ID" required></div>
+                <div class="input-field"><input type="text" id="name" placeholder="Name" required></div>
+                <div class="input-field"><input type="text" id="branch" placeholder="Branch" required></div>
+                <button id="nextStep">Next</button>
+            </div>
+            <div id="signupStep2">
+                <div class="input-field"><input type="email" id="email" placeholder="Email" required></div>
+                <div class="input-field"><input type="text" id="position" placeholder="Position" required></div>
+                <div class="input-field"><input type="password" id="password" placeholder="Password" required></div>
+                <button id="signupButton">Sign Up</button>
+            </div>
+            <div class="switch-form"><p>Already have an account? <a id="switchToSignin">Sign In</a></p></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('switchToSignup').addEventListener('click', function() {
+            document.getElementById('signinFormContainer').classList.remove('active');
+            document.getElementById('signupFormContainer').classList.add('active');
+        });
+
+        document.getElementById('switchToSignin').addEventListener('click', function() {
+            document.getElementById('signupFormContainer').classList.remove('active');
+            document.getElementById('signinFormContainer').classList.add('active');
+        });
+
+        document.getElementById('nextStep').addEventListener('click', function() {
+            document.getElementById('signupStep1').style.display = 'none';
+            document.getElementById('signupStep2').style.display = 'block';
+        });
+
+        document.getElementById('signinButton').addEventListener('click', function() {
+            const facultyID = document.getElementById('signinFacultyID').value;
+            const password = document.getElementById('signinPassword').value;
+
+            let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+
+            if (facultyData[facultyID] && facultyData[facultyID].password === password) {
+                localStorage.setItem('currentUser', facultyID);
+                localStorage.setItem('facultyName', facultyData[facultyID].name);
+                localStorage.setItem('facultyEmail', facultyData[facultyID].email);
+                localStorage.setItem('facultyPosition', facultyData[facultyID].position);
+                localStorage.setItem('facultyDepartment', facultyData[facultyID].branch);
+                localStorage.setItem('facultyPhone', localStorage.getItem('facultyPhone') || '');
+
+                alert('Login successful!');
+                window.location.href = 'schedule.html';
+            } else {
+                alert('Invalid credentials or faculty ID not registered.');
+            }
+        });
+
+        async function sendWelcomeEmail(name, email, facultyID) {
+            console.log(`Attempting to send welcome email to ${email} for ${name} (ID: ${facultyID})`);
+            try {
+                const response = await fetch('http://localhost:3000/send-welcome', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        email, // Faculty's email from sign-up
+                        facultyID,
+                        sender: "potnurumehersrija@gmail.com"
+                    })
+                });
+                if (response.ok) {
+                    console.log(`Welcome email successfully sent to ${email}`);
+                } else {
+                    const errorText = await response.text();
+                    console.error(`Failed to send welcome email to ${email}: ${response.status} - ${errorText}`);
+                    throw new Error(errorText);
+                }
+            } catch (error) {
+                console.error(`Welcome email fetch error for ${email}:`, error);
+            }
+        }
+
+        document.getElementById('signupButton').addEventListener('click', async function() {
+            const facultyID = document.getElementById('faculty_id').value;
+            const name = document.getElementById('name').value;
+            const branch = document.getElementById('branch').value;
+            const email = document.getElementById('email').value;
+            const position = document.getElementById('position').value;
+            const password = document.getElementById('password').value;
+
+            if (facultyID && name && branch && email && position && password) {
+                let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+                if (facultyData[facultyID]) {
+                    alert('Faculty ID already exists. Please sign in.');
+                    return;
+                }
+
+                facultyData[facultyID] = { name, branch, email, position, password };
+                localStorage.setItem('facultyData', JSON.stringify(facultyData));
+                localStorage.setItem('facultyName', name);
+                localStorage.setItem('facultyEmail', email);
+                localStorage.setItem('facultyPosition', position);
+                localStorage.setItem('facultyDepartment', branch);
+                localStorage.setItem('facultyPhone', '');
+
+                await sendWelcomeEmail(name, email, facultyID);
+
+                alert('Sign-Up Successful! You can now sign in.');
+                document.getElementById('signupFormContainer').classList.remove('active');
+                document.getElementById('signinFormContainer').classList.add('active');
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+    </script>
+</body>
+</html>

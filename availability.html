@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Availability</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: rgb(44, 36, 36);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-color: rgb(212, 211, 207);
+    background: linear-gradient(to top, rgb(129, 234, 215), rgb(236, 203, 203), rgb(255, 248, 248));
+}
+header {
+    background: rgb(22, 25, 25);
+    color: rgb(245, 242, 242);
+    padding: 15px;
+    display: flex;
+}
+header h1 {
+    margin-left: 50px;
+}
+nav {
+    margin: 10px 0;
+    margin-left: 550px;
+}
+nav button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    background: #e5e7ea;
+    color: rgb(18, 17, 17);
+    cursor: pointer;
+}
+nav button:hover {
+    background: rgb(236, 203, 203);
+    color: rgb(23, 21, 21);
+    border-radius: 50px;
+}
+.container {
+    height: 300px;
+    width: 400px;
+    background-color: rgb(225, 235, 239);
+    margin: 90px auto;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px black;
+    padding: 20px;
+}
+#status {
+    margin-top: 20px;
+}
+h2 {
+    color: rgb(0, 0, 0);
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: rgb(44, 36, 36);
+    background: linear-gradient(to top, rgb(165, 237, 223), rgb(236, 203, 203), rgb(255, 248, 248));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FACULTY DASHBOARD</h1>
+        <nav class="nav-button">
+            <button onclick="window.location.href='schedule.html'">Schedule</button>
+            <button onclick="window.location.href='availability.html'">Availability</button>
+            <button onclick="window.location.href='leavenotify.html'">Leave Notification</button>
+            <button onclick="window.location.href='profile.html'">Profile</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Good Morning!</h2>
+        <h2>Update Your Status</h2>
+        <form id="presenceForm">
+            <label for="status" style="margin-top: 20px;">Select your status:</label>
+            <select id="status" name="status" onchange="previewStatus()" style="margin-top: 20px;">
+                <option value="Present">Present</option>
+                <option value="Leave">Leave</option>
+            </select>
+            <div id="statusPreview" style="margin-top: 20px;"></div>
+            <button type="button" class="save-btn" onclick="updateStatus()" style="background-color: rgb(64, 179, 204); color: rgb(17, 17, 16); border: 0px; margin-top: 15px; height: 30px; padding: 8px; border-radius: 10px;">Save Changes</button><br>
+            <button type="button" class="submit-btn" onclick="updateStatus(true)" style="background-color: rgb(86, 228, 86); color: rgb(20, 20, 19); border: 0px; height: 30px; margin-top: 5px; padding: 8px; border-radius: 10px;">Submit</button><br>
+        </form>
+        <div id="confirmationMessage" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function previewStatus() {
+            const selectedStatus = document.getElementById("status").value;
+            document.getElementById("statusPreview").innerHTML = `Status Preview: <b>${selectedStatus}</b>`;
+        }
+
+        function updateStatus(redirect = false) {
+            const status = document.getElementById("status").value;
+            const currentUserID = localStorage.getItem("currentUser");
+            const facultyData = JSON.parse(localStorage.getItem("facultyData")) || {};
+
+            if (!currentUserID || !facultyData[currentUserID]) {
+                alert("Please log in first.");
+                window.location.href = "faclog.html";
+                return;
+            }
+
+            const today = new Date().toISOString().split("T")[0];
+            const timestamp = Date.now();
+            const statusKey = `status_${currentUserID}_${today}`;
+            localStorage.setItem(statusKey, JSON.stringify({ status, timestamp }));
+            displayStatus(status);
+
+            if (redirect) {
+                alert("Status submitted successfully!");
+                window.location.href = "schedule.html";
+            }
+        }
+
+        function displayStatus(status) {
+            const messageElement = document.getElementById("confirmationMessage");
+            messageElement.innerHTML = `Your status has been updated to: <b>${status}</b>`;
+            messageElement.style.display = "block";
+        }
+
+        async function sendReminderEmail(facultyName, email, facultyID, type) {
+            const today = new Date().toISOString().split("T")[0];
+            const reminderKey = `reminder_${facultyID}_${today}_${type}`;
+            if (localStorage.getItem(reminderKey)) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/send-reminder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        facultyName,
+                        email,
+                        date: today,
+                        sender: "potnurumehersrija@gmail.com",
+                        type
+                    })
+                });
+                if (response.ok) {
+                    localStorage.setItem(reminderKey, JSON.stringify({ timestamp: Date.now() }));
+                    console.log(`${type} reminder sent to ${email}`);
+                } else {
+                    throw new Error(`Failed to send ${type} reminder`);
+                }
+            } catch (error) {
+                console.error(`${type} reminder error:`, error);
+                alert(`Simulated ${type} reminder to ${email}: "Please update your status, ${facultyName}."`);
+            }
+        }
+
+        function checkStatusAndSendReminder() {
+            const currentUserID = localStorage.getItem("currentUser");
+            const facultyData = JSON.parse(localStorage.getItem("facultyData")) || {};
+            if (!currentUserID || !facultyData[currentUserID]) return;
+
+            const today = new Date().toISOString().split("T")[0];
+            const statusKey = `status_${currentUserID}_${today}`;
+            const statusData = JSON.parse(localStorage.getItem(statusKey));
+            const { name, email } = facultyData[currentUserID];
+
+            if (!statusData || (Date.now() - statusData.timestamp > 8 * 60 * 60 * 1000)) {
+                if (statusData) {
+                    localStorage.removeItem(statusKey);
+                    sendReminderEmail(name, email, currentUserID, "expired");
+                }
+            }
+
+            const now = new Date();
+            if (now.getHours() === 10 && now.getMinutes() <= 5 && !statusData) {
+                sendReminderEmail(name, email, currentUserID, "daily");
+            }
+        }
+
+        window.onload = function () {
+            const currentUserID = localStorage.getItem("currentUser");
+            const facultyData = JSON.parse(localStorage.getItem("facultyData")) || {};
+
+            if (!currentUserID || !facultyData[currentUserID]) {
+                alert("Please log in first.");
+                window.location.href = "faclog.html";
+                return;
+            }
+
+            const today = new Date().toISOString().split("T")[0];
+            const statusKey = `status_${currentUserID}_${today}`;
+            const savedData = JSON.parse(localStorage.getItem(statusKey));
+
+            if (savedData && Date.now() - savedData.timestamp <= 8 * 60 * 60 * 1000) {
+                document.getElementById("status").value = savedData.status;
+                displayStatus(savedData.status);
+                previewStatus();
+            } else if (savedData) {
+                localStorage.removeItem(statusKey);
+                sendReminderEmail(facultyData[currentUserID].name, facultyData[currentUserID].email, currentUserID, "expired");
+            }
+
+            setInterval(checkStatusAndSendReminder, 60000); // 1 minute for testing, 300000 (5 minutes) for production
+        };
+    </script>
+</body>
+</html>

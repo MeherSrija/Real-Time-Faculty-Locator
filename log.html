@@ -1,0 +1,184 @@
+<!-- faculty signin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Sign-Up/Sign-In</title>
+    <style>
+        /* CSS remains unchanged */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('https://img.freepik.com/free-photo/flat-lay-office-stationery-with-copy-space-scissors_23-2148524831.jpg') no-repeat center / cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: #aea1a1;
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .form-container {
+            max-width: 600px;
+            background-color: white;
+            width: 300px;
+            padding: 30px;
+            margin-left: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #333;
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #00796b;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container active" id="signinFormContainer">
+            <h2>Sign-In</h2><br>
+            <div class="input-field"><input type="text" id="signinFacultyID" placeholder="Faculty ID" required></div>
+            <div class="input-field"><input type="password" id="signinPassword" placeholder="Password" required></div>
+            <button id="signinButton">Sign In</button>
+            <div class="switch-form"><p>Don't have an account? <a id="switchToSignup">Sign Up</a></p></div>
+        </div>
+
+        <div class="form-container" id="signupFormContainer">
+            <h2>Sign-Up</h2><br>
+            <div id="signupStep1">
+                <div class="input-field"><input type="text" id="faculty_id" placeholder="Faculty ID" required></div>
+                <div class="input-field"><input type="text" id="name" placeholder="Name" required></div>
+                <div class="input-field"><input type="text" id="branch" placeholder="Branch" required></div>
+                <button id="nextStep">Next</button>
+            </div>
+            <div id="signupStep2" style="display: none;">
+                <div class="input-field"><input type="email" id="email" placeholder="Email" required></div>
+                <div class="input-field"><input type="text" id="position" placeholder="Position" required></div>
+                <div class="input-field"><input type="password" id="password" placeholder="Password" required></div>
+                <button id="signupButton">Sign Up</button>
+            </div>
+            <div class="switch-form"><p>Already have an account? <a id="switchToSignin">Sign In</a></p></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('switchToSignup').addEventListener('click', function () {
+            document.getElementById('signinFormContainer').classList.remove('active');
+            document.getElementById('signupFormContainer').classList.add('active');
+        });
+
+        document.getElementById('switchToSignin').addEventListener('click', function () {
+            document.getElementById('signupFormContainer').classList.remove('active');
+            document.getElementById('signinFormContainer').classList.add('active');
+        });
+
+        document.getElementById('nextStep').addEventListener('click', function () {
+            document.getElementById('signupStep1').style.display = 'none';
+            document.getElementById('signupStep2').style.display = 'block';
+        });
+
+        document.getElementById('signupButton').addEventListener('click', function () {
+            const facultyID = document.getElementById('faculty_id').value;
+            const name = document.getElementById('name').value;
+            const branch = document.getElementById('branch').value;
+            const email = document.getElementById('email').value;
+            const position = document.getElementById('position').value;
+            const password = document.getElementById('password').value;
+
+            if (facultyID && name && branch && email && position && password) {
+                let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+                if (facultyData[facultyID]) {
+                    alert('Faculty ID already exists. Please sign in.');
+                    return;
+                }
+
+                facultyData[facultyID] = { name, branch, email, position, password };
+                localStorage.setItem('facultyData', JSON.stringify(facultyData));
+
+                // Also save individual fields for profile.html compatibility
+                localStorage.setItem('facultyName', name);
+                localStorage.setItem('facultyEmail', email);
+                localStorage.setItem('facultyPosition', position);
+                localStorage.setItem('facultyDepartment', branch); // Map "branch" to "department"
+                localStorage.setItem('facultyPhone', ''); // Default empty phone, editable later
+
+                alert('Sign-Up Successful! You can now sign in.');
+                
+                document.getElementById('signupFormContainer').classList.remove('active');
+                document.getElementById('signinFormContainer').classList.add('active');
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+
+        document.getElementById('signinButton').addEventListener('click', function () {
+            const facultyID = document.getElementById('signinFacultyID').value;
+            const password = document.getElementById('signinPassword').value;
+
+            let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+
+            if (facultyData[facultyID] && facultyData[facultyID].password === password) {
+                localStorage.setItem('currentUser', facultyID);
+
+                // Populate individual fields based on signed-in user
+                localStorage.setItem('facultyName', facultyData[facultyID].name);
+                localStorage.setItem('facultyEmail', facultyData[facultyID].email);
+                localStorage.setItem('facultyPosition', facultyData[facultyID].position);
+                localStorage.setItem('facultyDepartment', facultyData[facultyID].branch); // Map "branch" to "department"
+                localStorage.setItem('facultyPhone', localStorage.getItem('facultyPhone') || ''); // Preserve if already set
+
+                alert('Login successful!');
+                window.location.href = 'profile.html'; // Redirect to profile page
+            } else {
+                alert('Invalid credentials or faculty ID not registered.');
+            }
+        });
+    </script>
+</body>
+</html>

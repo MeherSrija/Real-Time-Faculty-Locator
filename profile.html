@@ -1,0 +1,270 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Profile</title>
+    <style>
+        /* CSS remains unchanged */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(to top, rgb(129, 234, 215), rgb(236, 203, 203), rgb(255, 248, 248));
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: rgb(44, 36, 36);
+            background: linear-gradient(to top, rgb(165, 237, 223), rgb(236, 203, 203), rgb(255, 248, 248));
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .profile-container {
+            width: 50%;
+            margin: auto;
+            background: rgb(236, 246, 249);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 100px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px black;
+        }
+        h2 {
+            color: #001e53;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 50%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #001e53;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #010742;
+        }
+        .readonly {
+            background-color: #eaeaea;
+            cursor: not-allowed;
+        }
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #001e53;
+        }
+        #imageUpload {
+            display: none;
+        }
+        .upload-label {
+            color: #001e53;
+            cursor: pointer;
+            display: block;
+            margin-top: 10px;
+        }
+        header {
+            background: #0c0c0c;
+            color: white;
+            padding: 15px;
+            display: flex;
+        }
+        nav {
+            margin: 10px 0;
+            margin-left: 550px;
+        }
+        nav button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #e5e7ea;
+            color: black;
+            cursor: pointer;
+        }
+        nav button:hover {
+            background: rgb(236, 203, 203);
+            color: black;
+            border-radius: 50px;
+        }
+        #content {
+            padding: 20px;
+        }
+        h1 {
+            margin-left: 50px;
+        }
+        h2 {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FACULTY DASHBOARD</h1>
+        <nav>
+            <button onclick="window.location.href='schedule.html'">Schedule</button>
+            <button onclick="window.location.href='availability.html'">Availability</button>
+            <button onclick="window.location.href='leavenotify.html'">Leave Notification</button>
+            <button onclick="window.location.href='profile.html'">Profile</button>
+        </nav>
+    </header>
+
+    <div class="profile-container" style="margin-top: 50px; height: 450px; width: 500px;">
+        <div>
+            <img id="profilePic" class="profile-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KlvgB0VhXEt0gKxZfHiNm7mFLJOTwi4WPg&s" alt="Profile Picture">
+            <input type="file" id="imageUpload" accept="image/*">
+            <label for="imageUpload" class="upload-label">Change Profile Picture</label>
+        </div>
+
+        <form id="profileForm">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" class="readonly" disabled><br>
+
+            <label for="email" style="margin-left: 32px;">Email:</label>
+            <input type="email" id="email" class="readonly" disabled><br>
+            <label for="phone" style="margin-left: 10px;">Position:</label>
+            <input type="text" id="position" class="readonly" disabled><br>
+            <label for="department" style="margin-left: -15px;">Department:</label>
+            <input type="text" id="department" class="readonly" disabled><br>
+
+            <label for="phone" style="margin-left: -40px;">Phone Number:</label>
+            <input type="tel" id="phone" class="readonly" disabled>
+
+            <div class="button-container">
+                <button type="button" id="editBtn" style="background-color: rgb(27, 117, 213); border-radius: 8px; margin-top: 10px;">Edit</button>
+                <button type="button" id="saveBtn" style="background-color: rgb(45, 234, 73); border-radius: 8px; color: black;">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the current signed-in user's facultyID
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please sign in first.');
+                window.location.href = 'faculty signin.html';
+                return;
+            }
+
+            // Fetch faculty data
+            let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+            const userData = facultyData[currentUser] || {};
+
+            // Load saved profile data for the current user
+            document.getElementById("name").value = userData.name || localStorage.getItem("facultyName") || "";
+            document.getElementById("email").value = userData.email || localStorage.getItem("facultyEmail") || "";
+            document.getElementById("position").value = userData.position || localStorage.getItem("facultyPosition") || "";
+            document.getElementById("department").value = userData.branch || localStorage.getItem("facultyDepartment") || "";
+            document.getElementById("phone").value = localStorage.getItem("facultyPhone") || "";
+
+            // Load saved profile image
+            let savedImage = localStorage.getItem("facultyImage");
+            if (savedImage) {
+                document.getElementById("profilePic").src = savedImage;
+            }
+        });
+
+        document.getElementById("editBtn").addEventListener("click", function () {
+            document.querySelectorAll("input[type='text'], input[type='email'], input[type='tel']").forEach(input => {
+                input.disabled = false;
+                input.classList.remove("readonly");
+            });
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", function () {
+            const currentUser = localStorage.getItem('currentUser');
+            let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+
+            // Update facultyData with new values
+            facultyData[currentUser] = {
+                ...facultyData[currentUser],
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                position: document.getElementById("position").value,
+                branch: document.getElementById("department").value, // Map "department" back to "branch"
+                password: facultyData[currentUser].password // Preserve password
+            };
+
+            // Save to localStorage
+            localStorage.setItem("facultyData", JSON.stringify(facultyData));
+            localStorage.setItem("facultyName", document.getElementById("name").value);
+            localStorage.setItem("facultyEmail", document.getElementById("email").value);
+            localStorage.setItem("facultyPosition", document.getElementById("position").value);
+            localStorage.setItem("facultyDepartment", document.getElementById("department").value);
+            localStorage.setItem("facultyPhone", document.getElementById("phone").value);
+
+            alert("Profile updated successfully!");
+
+            // Disable inputs after saving
+            document.querySelectorAll("input[type='text'], input[type='email'], input[type='tel']").forEach(input => {
+                input.disabled = true;
+                input.classList.add("readonly");
+            });
+        });
+
+        document.getElementById("imageUpload").addEventListener("change", function (event) {
+    let file = event.target.files[0];
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+            let imageUrl = e.target.result;
+            document.getElementById("profilePic").src = imageUrl;
+
+            // Save the image in facultyData under the current user's facultyID
+            const currentUser = localStorage.getItem('currentUser');
+            let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+            if (facultyData[currentUser]) {
+                facultyData[currentUser].image = imageUrl; // Add image to facultyData
+                localStorage.setItem("facultyData", JSON.stringify(facultyData));
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+});
+document.addEventListener("DOMContentLoaded", function () {
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+        alert('Please sign in first.');
+        window.location.href = 'faculty signin.html';
+        return;
+    }
+
+    let facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+    const userData = facultyData[currentUser] || {};
+
+    document.getElementById("name").value = userData.name || localStorage.getItem("facultyName") || "";
+    document.getElementById("email").value = userData.email || localStorage.getItem("facultyEmail") || "";
+    document.getElementById("position").value = userData.position || localStorage.getItem("facultyPosition") || "";
+    document.getElementById("department").value = userData.branch || localStorage.getItem("facultyDepartment") || "";
+    document.getElementById("phone").value = localStorage.getItem("facultyPhone") || "";
+
+    // Load faculty-specific profile image
+    let savedImage = userData.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KlvgB0VhXEt0gKxZfHiNm7mFLJOTwi4WPg&s";
+    document.getElementById("profilePic").src = savedImage;
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: rgb(44, 36, 36);
+            /* background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover; */
+            background-color: rgb(212, 211, 207);
+           background:linear-gradient(to top,rgb(129, 234, 215),rgb(236, 203, 203),rgb(255, 248, 248));
+            /* background-image: url('https://w0.peakpx.com/wallpaper/509/403/HD-wallpaper-minimalism-cat-blue-black-pisici-eyes-thumbnail.jpg'); */
+        }
+
+        header {
+            background: rgb(19, 20, 20);
+            color: rgb(245, 242, 242);
+            padding: 15px;
+            display: flex;
+            
+        }
+        header h1{
+            margin-left: 50px;
+        }
+
+        nav {
+            margin: 10px 0;
+            margin-left: 550px;
+        }
+
+        nav button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #e5e7ea;
+            color: rgb(18, 17, 17);
+            cursor: pointer;
+            
+        }
+
+        nav button:hover {
+            background: rgb(236, 203, 203); 
+            color: rgb(23, 21, 21);
+            border-radius: 50px;
+        }
+        .container {
+            max-width: 350px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgb(255, 254, 251);
+            border-radius: 8px;
+            border-radius: 20px; box-shadow: 0 5px 15px black;
+            margin-top: 50px;
+        
+        }
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: rgb(44, 36, 36);                                     
+    background: linear-gradient(to top, rgb(165, 237, 223), rgb(236, 203, 203), rgb(255, 248, 248));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    
+}
+        nav button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #e5e7ea;    
+            color: black;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background: rgb(236, 203, 203);
+            color: black;
+            border-radius: 50px;
+        }
+
+        #content {
+            padding: 20px;
+        }
+
+        h2 {
+            color: rgb(0, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Previous HTML content unchanged -->
+    <header>
+        <h1>FACULTY DASHBOARD</h1>
+        <nav>
+            <button onclick="window.location.href='schedule.html'">Schedule</button>
+            <button onclick="window.location.href='availability.html'">Availability</button>
+            <button onclick="window.location.href='leavenotify.html'">Leave Notification</button>
+            <button onclick="window.location.href='profile.html'">Profile</button>
+    
+        </nav>
+    </header>
+
+    
+    <div class="container">
+        <h1>Leave Details</h1>
+        <form id="holidayForm">
+            <label for="facultyName">Faculty Name:</label>
+            <input type="text" id="facultyName" required placeholder="Enter your name">
+            <br><br>
+            <label for="holidayDate">Select Leave Date:</label>
+            <input type="date" id="holidayDate" required>
+            <br><br>
+            <label for="reason">Reason for Leave:</label><br><br>
+            <textarea id="reason" rows="4" required></textarea>
+            <br><br>
+            <button type="submit" style="background-color: gray; width: 100px; height: 30px;">Update</button>
+        </form>
+        <br><br><div id="message" class="message"></div>
+    </div>
+    <div class="container">
+        <h2 style="height: 0px;">Unavailable Days</h2>
+        <br><div id="holidayList" class="holiday-list"></div><br>
+    </div>
+
+    <script>
+        const holidayList = JSON.parse(localStorage.getItem('holidays')) || [];
+        const leaveNotifications = JSON.parse(localStorage.getItem('leaveNotifications')) || [];
+
+        document.getElementById('holidayForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const facultyName = document.getElementById('facultyName').value;
+            const holidayDateInput = document.getElementById('holidayDate').value;
+            const reason = document.getElementById('reason').value;
+            const holidayDate = new Date(holidayDateInput);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (holidayDate > today) {
+                holidayList.push({ date: holidayDate.toDateString(), reason: reason, facultyName: facultyName });
+                localStorage.setItem('holidays', JSON.stringify(holidayList));
+
+                leaveNotifications.push({
+                    facultyName: facultyName,
+                    date: holidayDate.toDateString(),
+                    reason: reason,
+                    timestamp: new Date().getTime()
+                });
+                localStorage.setItem('leaveNotifications', JSON.stringify(leaveNotifications));
+
+                document.getElementById('message').innerText = `Leave updated for ${facultyName} on ${holidayDate.toDateString()}.`;
+                document.getElementById('holidayForm').reset();
+                displayHolidays();
+            } else {
+                document.getElementById('message').innerText = "Invalid leave date. Please ensure it is in the future.";
+            }
+        });
+
+        function displayHolidays() {
+            // Unchanged displayHolidays function
+            const holidayListDiv = document.getElementById('holidayList');
+            holidayListDiv.innerHTML = '';
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            holidayList.forEach((holiday, index) => {
+                const holidayDate = new Date(holiday.date);
+                if (holidayDate >= today) {
+                    const holidayItem = document.createElement('div');
+                    holidayItem.className = 'holiday-item';
+                    holidayItem.innerText = `${holiday.date} - Reason: ${holiday.reason}`;
+
+                    const deleteButton = document.createElement('span');
+                    deleteButton.className = 'swipe-delete';
+                    deleteButton.innerText = '❌';
+                    deleteButton.onclick = function() {
+                        deleteHoliday(index);
+                    };
+
+                    holidayItem.appendChild(deleteButton);
+                    holidayListDiv.appendChild(holidayItem);
+                }
+            });
+        }
+
+        function deleteHoliday(index) {
+            const deletedHoliday = holidayList.splice(index, 1)[0];
+            localStorage.setItem('holidays', JSON.stringify(holidayList));
+
+            const notificationIndex = leaveNotifications.findIndex(
+                n => n.facultyName === deletedHoliday.facultyName && n.date === deletedHoliday.date
+            );
+            if (notificationIndex !== -1) {
+                leaveNotifications.splice(notificationIndex, 1);
+                localStorage.setItem('leaveNotifications', JSON.stringify(leaveNotifications));
+            }
+
+            displayHolidays();
+            document.getElementById('message').innerText = "Holiday deleted successfully.";
+        }
+
+        displayHolidays();
+    </script>
+</body>
+</html>

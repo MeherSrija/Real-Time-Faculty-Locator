@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: rgb(44, 36, 36);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            background-color: rgb(212, 211, 207);
+            background-image: url('https://w0.peakpx.com/wallpaper/509/403/HD-wallpaper-minimalism-cat-blue-black-pisici-eyes-thumbnail.jpg');
+        }
+
+        header {
+            background: #001e53;
+            color: white;
+            padding: 15px;
+        }
+
+        nav {
+            margin: 10px 0;
+        }
+
+        nav button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #001e53;
+            color: white;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background: #010742;
+        }
+
+        .container {
+            height: 350px;
+            width: 370px;
+            background-color: rgb(225, 235, 239);
+            margin: 30px auto;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px black;
+            padding: 20px;
+            margin-right: 650px;
+        }
+
+        h2 {
+            color: rgb(0, 0, 0);
+        }
+    </style>
+    </head>
+    <body>
+        <header>
+            <h1>FACULTY DASHBOARD</h1>
+        </header>
+    
+        <nav>
+            <button onclick="window.location.href='schedule.html'">Schedule</button>
+            <button onclick="window.location.href='availability.html'">Availability</button>
+            <button onclick="window.location.href='leavenotify.html'">Leave Notification</button>
+            <button onclick="window.location.href='profile.html'">Profile</button>
+        </nav>
+    
+    <script>
+        function updateStatus() {
+            const status = document.getElementById('status').value;
+            const facultyName = document.getElementById('facultyName').value;
+            const timestamp = new Date().getTime();
+            
+            localStorage.setItem(facultyName, JSON.stringify({ status, timestamp }));
+            displayStatus(status);
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        function displayStatus(status) {
+            const messageElement = document.getElementById('confirmationMessage');
+            messageElement.innerHTML = `Your status has been updated to: <b>${status}</b>`;
+            messageElement.style.display = 'block';
+        }
+
+        function previewStatus() {
+            const selectedStatus = document.getElementById("status").value;
+            document.getElementById("statusPreview").innerHTML = `Status Preview: <b>${selectedStatus}</b>`;
+        }
+
+        window.onload = function () {
+            const currentUserID = localStorage.getItem('currentUser');
+            const facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+            
+            if (currentUserID && facultyData[currentUserID]) {
+                const facultyName = facultyData[currentUserID].name;
+                document.getElementById('facultyName').value = facultyName;
+
+                const savedData = localStorage.getItem(facultyName);
+                if (savedData) {
+                    const { status, timestamp } = JSON.parse(savedData);
+                    const currentTime = new Date().getTime();
+                    
+                    if (currentTime - timestamp <= 8 * 60 * 60 * 1000) {
+                        document.getElementById('status').value = status;
+                        displayStatus(status);
+                    } else {
+                        localStorage.removeItem(facultyName);
+                    }
+                }
+            } else {
+                alert('Please log in first.');
+                window.location.href = 'faclog.html';
+            }
+        };
+    </script>
+    
+    </body>
+</html>

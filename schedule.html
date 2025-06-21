@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Portal</title>
+    <style>
+        /* Keep CSS unchanged */
+        body {
+    font-family: Arial, sans-serif;
+    margin: 50px;
+    padding: 0;
+    text-align: center;
+    color: rgb(44, 36, 36);                                     
+    background-repeat: no-repeat;
+    background-position: center;
+    background:linear-gradient(to top,rgb(129, 234, 215),rgb(236, 203, 203),rgb(255, 248, 248));
+}
+
+header {
+    background: #131414;
+    color: white;
+    padding: 15px;
+    align-items: center;
+    display: flex;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: rgb(44, 36, 36);                                     
+    background: linear-gradient(to top, rgb(165, 237, 223), rgb(236, 203, 203), rgb(255, 248, 248));
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    
+}
+
+nav {
+            margin: 5px;
+            margin-left: 550px;
+        }
+
+        nav button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background:rgb(219, 224, 223);
+            justify-content: center;
+            align-items: center;
+            color: rgb(17, 17, 17);
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background: rgb(236, 203, 203);
+            color: rgb(26, 25, 25);
+            border-radius: 20px;
+        }
+
+#content {
+    padding: 20px;
+}
+ul{
+    margin-top: 70px;
+}
+h2{
+    color: rgb(0, 0, 0);
+    margin-top: 70px;
+}
+h1{
+    margin-left: 50px;
+}
+label{
+    color: white;
+}
+.popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .popup-buttons {
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        .popup-buttons button {
+            margin-left: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .edit-btn { background-color: #007bff; color: white; }
+        .save-btn { background-color: #28a745; color: white; }
+        .close-btn { background-color: #dc3545; color: white; }
+
+        .time-slot {
+            display: inline-block;
+            padding: 10px;
+            width: 12.5%;
+            margin: 5px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            cursor: pointer;
+            /* border-radius: 5px; box-shadow: 0 5px 15px black; */
+            text-align: center;
+        }
+        .day-slot {
+            display: inline-block;
+            padding: 10px;
+            width: 12.5%;
+            margin: 0px;
+            background-color: #eabdd7;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            /* border-radius: 5px; box-shadow: 0 5px 15px black; */
+        }
+
+        .time-slot:hover { background-color: #d6d8db; }
+        .day-slot:hover { background-color: #d6d8db; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FACULTY DASHBOARD</h1>
+        <nav>
+            <button onclick="window.location.href='schedule.html'">Schedule</button>
+            <button onclick="window.location.href='availability.html'">Availability</button>
+            <button onclick="window.location.href='leavenotify.html'">Leave Notification</button>
+            <button onclick="window.location.href='profile.html'">Profile</button>
+        </nav>
+    </header>
+
+    <h2 style="text-align: center;">Weekly Timetable</h2>
+    <ul style="align-items: center;justify-content: center;">
+        <span class="day-slot" data-time="monday-9am" style="width: 130px; height: 20px; font-size:medium; font-weight: 100px;">Monday</span>
+        <span class="time-slot" data-time="monday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="monday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="monday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="monday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="monday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="monday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+        <!-- Repeat for other days with corrected data-time attributes -->
+        <span class="day-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:medium;">Tuesday</span>
+        <span class="time-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="tuesday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="tuesday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="tuesday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="tuesday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="tuesday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+
+        <span class="day-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:medium;">Wednesday</span>
+        <span class="time-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="tuesday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="tuesday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="tuesday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="tuesday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="tuesday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+
+        <span class="day-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:medium;">Thursday</span>
+        <span class="time-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="tuesday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="tuesday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="tuesday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="tuesday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="tuesday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+
+        <span class="day-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:medium;">Friday</span>
+        <span class="time-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="tuesday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="tuesday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="tuesday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="tuesday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="tuesday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+
+        <span class="day-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:medium;">Saturday</span>
+        <span class="time-slot" data-time="tuesday-9am" style="width: 130px; height: 20px; font-size:small;">9:00 AM - 10:00 AM</span>
+        <span class="time-slot" data-time="tuesday-10am" style="width: 130px; height: 20px; font-size:small;">10:00 AM - 11:00 AM</span>
+        <span class="time-slot" data-time="tuesday-11am" style="width: 130px; height: 20px; font-size:small;">11:00 AM - 12:00 PM</span>
+        <span class="time-slot" data-time="tuesday-1pm" style="width: 130px; height: 20px; font-size:small;">1:00 PM - 2:00 PM</span>
+        <span class="time-slot" data-time="tuesday-2pm" style="width: 130px; height: 20px; font-size:small;">2:00 PM - 3:00 PM</span>
+        <span class="time-slot" data-time="tuesday-3pm" style="width: 130px; height: 20px; font-size:small;">3:00 PM - 4:00 PM</span><br>
+        <!-- Add Wednesday, Thursday, Friday similarly with unique data-time attributes -->
+    </ul>
+
+    <div id="popup" class="popup">
+        <h3>Class Details</h3>
+        <label for="classRoom" style="color: black;">Class/Cabin/Meeting:</label>
+        <input type="text" id="classRoom" placeholder="Enter Class/Cabin" disabled>
+        <div class="popup-buttons">
+            <button class="edit-btn" id="editBtn">Edit</button>
+            <button class="save-btn" id="saveBtn">Save</button>
+            <button class="close-btn" id="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const currentUserID = localStorage.getItem('currentUser');
+        const facultyData = JSON.parse(localStorage.getItem('facultyData')) || {};
+        const currentFaculty = facultyData[currentUserID]?.name || "Unknown Faculty";
+        const facultyID = currentUserID; // Use facultyID directly
+    
+        document.querySelectorAll(".time-slot").forEach(slot => {
+            slot.addEventListener("click", function () {
+                const time = this.dataset.time; // e.g., "monday-9am"
+                let facultySchedules = JSON.parse(localStorage.getItem('facultySchedules')) || {};
+                const classDetails = facultySchedules[facultyID]?.[time] || "Not Assigned";
+                document.getElementById("classRoom").value = classDetails;
+                document.getElementById("popup").style.display = "block";
+                document.getElementById("popup").dataset.time = time; // Store just the time
+                document.getElementById("popup").dataset.facultyID = facultyID; // Store facultyID
+            });
+        });
+    
+        document.getElementById("editBtn").addEventListener("click", function () {
+            document.getElementById("classRoom").disabled = false;
+        });
+    
+        document.getElementById("saveBtn").addEventListener("click", function () {
+            const time = document.getElementById("popup").dataset.time; // e.g., "monday-9am"
+            const facultyID = document.getElementById("popup").dataset.facultyID;
+            const newClassRoom = document.getElementById("classRoom").value;
+            
+            let facultySchedules = JSON.parse(localStorage.getItem('facultySchedules')) || {};
+            facultySchedules[facultyID] = facultySchedules[facultyID] || {};
+            facultySchedules[facultyID][time] = newClassRoom;
+            localStorage.setItem('facultySchedules', JSON.stringify(facultySchedules));
+            
+            alert("Class/Cabin details saved!");
+            document.getElementById("popup").style.display = "none";
+        });
+    
+        document.getElementById("closeBtn").addEventListener("click", function () {
+            document.getElementById("popup").style.display = "none";
+        });
+    </script>
+</body>
+</html>
